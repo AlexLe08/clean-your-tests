@@ -151,3 +151,40 @@ describe('getMedicalPricePerRole', () => {
   })
   
 })
+
+describe('calculateMedicalPrice', ()=> {
+  xit('Returns the price of the medical plan based on how many roles the applicant has to cover', () => {
+    let product = products.medical
+    let selectedOptions = { familiyMembersToCover: ['ee','sp','ch'] }
+
+    let result = pricing.calculateMedicalPrice(product,selectedOptions)
+
+    expect(result).to.equal(22.88)
+  })
+})
+
+describe('calculateVolLifePricePerRole', () => {
+  xit('Searches arrays of objects in VolLife to find the price based on the role given', () => {
+    let role = 'ee'
+    let coverageLevel = products.voluntaryLife.coverage
+    let costs = products.voluntaryLife.costs
+
+    let result = pricing.calculateVolLifePricePerRole(role, coverageLevel, costs)
+
+    //expect(result).to.equal()
+    console.log(result)
+  })
+})
+
+describe('calculateVolLifePrice', () => {
+  it('Returns price of VolLife package based on the sum of prices by roles given', () => {
+    let product = products.voluntaryLife
+    let selectedOptions = {familyMembersToCover: ["ee","sp"]};
+
+
+    let result = pricing.calculateVolLifePrice(product, selectedOptions)
+
+    console.log(result)
+  })
+})
+
