@@ -177,14 +177,14 @@ describe('calculateVolLifePricePerRole', () => {
 })
 
 describe('calculateVolLifePrice', () => {
-  it('Returns price of VolLife package based on the sum of prices by roles given', () => {
+  xit('Returns price of VolLife package based on the sum of prices by roles given', () => {
     let product = products.voluntaryLife
     let selectedOptions = {familyMembersToCover: ["ee","sp"]};
 
 
     let result = pricing.calculateVolLifePrice(product, selectedOptions)
 
-    console.log(result)
+    //console.log(result)
   })
 })
 
