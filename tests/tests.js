@@ -153,38 +153,52 @@ describe('getMedicalPricePerRole', () => {
 })
 
 describe('calculateMedicalPrice', ()=> {
-  xit('Returns the price of the medical plan based on how many roles the applicant has to cover', () => {
+  it('Returns the price of the medical plan based on how many roles the applicant has to cover', () => {
     let product = products.medical
-    let selectedOptions = { familiyMembersToCover: ['ee','sp','ch'] }
+    let selectedOptions = { familyMembersToCover: ['ee','sp'] }
 
     let result = pricing.calculateMedicalPrice(product,selectedOptions)
 
-    expect(result).to.equal(22.88)
+    expect(result).to.equal(21.71)
   })
 })
 
 describe('calculateVolLifePricePerRole', () => {
-  xit('Searches arrays of objects in VolLife to find the price based on the role given', () => {
+  it('Searches arrays of objects in VolLife to find the price based on the role given', () => {
     let role = 'ee'
-    let coverageLevel = products.voluntaryLife.coverage
+    let coverageLevel = [{ role: 'ee', coverage: 125000 }]
     let costs = products.voluntaryLife.costs
 
     let result = pricing.calculateVolLifePricePerRole(role, coverageLevel, costs)
 
-    //expect(result).to.equal()
-    console.log(result)
+    expect(result).to.equal(43.75)
   })
 })
 
 describe('calculateVolLifePrice', () => {
-  xit('Returns price of VolLife package based on the sum of prices by roles given', () => {
+  it('Returns price of VolLife package based on the sum of prices by roles given', () => {
     let product = products.voluntaryLife
-    let selectedOptions = {familyMembersToCover: ["ee","sp"]};
-
+    const selectedOptions = {
+      familyMembersToCover: ['ee'],
+      coverageLevel: [{ role: 'ee', coverage: 125000 }],
+    }
 
     let result = pricing.calculateVolLifePrice(product, selectedOptions)
+    expect(result).to.equal(43.75)
+  })
+})
 
-    //console.log(result)
+describe('calculateLTDPrice', () => {
+  it("returns price of LTD package; takes only the employee into account", () => {
+    let product = products.longTermDisability
+    let selectedOptions = {
+      familyMembersToCover: ['sp','ch', 'ee']
+    }
+
+    let result = pricing.calculateProductPrice(product, employee, selectedOptions)
+
+    expect(price).to.equal(22.04)
+    console.log(result)
   })
 })
 
