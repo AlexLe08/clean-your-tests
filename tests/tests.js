@@ -1,14 +1,42 @@
 const pricing = require('../pricing')
 const products = require('./products')
 const employee = require('./employee')
-const expect = require('chai').expect
+const chai = require('chai')
+
+const sinon = require("sinon")
+const sinonChai = require("sinon-chai")
+
+const { expect } = chai
+chai.use(sinonChai)
 
 describe('calculateProductPrice', () => {
+  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy
+
+  before( () => {
+    sandbox = sinon.createSandbox()
+  })
+
+  beforeEach(() => {
+    calculateMedicalPriceSpy = sandbox.spy(pricing, 'calculateMedicalPrice')
+    calculateVolLifePriceSpy = sandbox.spy(pricing, 'calculateVolLifePrice')
+    calculateLTDPriceSpy = sandbox.spy(pricing, 'calculateLTDPrice')
+    formatPriceSpy = sandbox.spy(pricing, 'formatPrice')
+
+  })
+
+  afterEach( () => {
+    sandbox.restore()
+  })
+
   it('returns the price for a medical product for a single employee', () => {
     const selectedOptions = { familyMembersToCover: ['ee'] }
     const price = pricing.calculateProductPrice(products.medical, employee, selectedOptions)
 
     expect(price).to.equal(19.26)
+    expect(calculateMedicalPriceSpy).to.have.callCount(1)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('returns the price for a medical product for an employee with a spouse', () => {
@@ -16,6 +44,10 @@ describe('calculateProductPrice', () => {
     const price = pricing.calculateProductPrice(products.medical, employee, selectedOptions)
 
     expect(price).to.equal(21.71)
+    expect(calculateMedicalPriceSpy).to.have.callCount(1)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('returns the price for a medical product for an employee with a spouse and one child', () => {
@@ -23,6 +55,10 @@ describe('calculateProductPrice', () => {
     const price = pricing.calculateProductPrice(products.medical, employee, selectedOptions)
 
     expect(price).to.equal(22.88)
+    expect(calculateMedicalPriceSpy).to.have.callCount(1)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('returns the price for a voluntary life product for a single employee', () => {
@@ -33,6 +69,10 @@ describe('calculateProductPrice', () => {
     const price = pricing.calculateProductPrice(products.voluntaryLife, employee, selectedOptions)
 
     expect(price).to.equal(39.37)
+    expect(calculateMedicalPriceSpy).to.have.callCount(0)
+    expect(calculateVolLifePriceSpy).to.have.callCount(1)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('returns the price for a voluntary life product for an employee with a spouse', () => {
@@ -46,6 +86,10 @@ describe('calculateProductPrice', () => {
     const price = pricing.calculateProductPrice(products.voluntaryLife, employee, selectedOptions)
 
     expect(price).to.equal(71.09)
+    expect(calculateMedicalPriceSpy).to.have.callCount(0)
+    expect(calculateVolLifePriceSpy).to.have.callCount(1)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('returns the price for a disability product for an employee', () => {
@@ -55,12 +99,20 @@ describe('calculateProductPrice', () => {
     const price = pricing.calculateProductPrice(products.longTermDisability, employee, selectedOptions)
 
     expect(price).to.equal(22.04)
+    expect(calculateMedicalPriceSpy).to.have.callCount(0)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(1)
+    expect(formatPriceSpy).to.have.callCount(1)
   })
 
   it('throws an error on unknown product type', () => {
     const unknownProduct = { type: 'vision' }
 
     expect(() => pricing.calculateProductPrice(unknownProduct, {}, {})).to.throw('Unknown product type: vision')
+    expect(calculateMedicalPriceSpy).to.have.callCount(0)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(formatPriceSpy).to.have.callCount(0)
   })
 })
 
