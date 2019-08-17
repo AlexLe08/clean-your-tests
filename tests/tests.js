@@ -10,7 +10,7 @@ const { expect } = chai
 chai.use(sinonChai)
 
 describe('calculateProductPrice', () => {
-  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy
+  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy,calculateCommuterPriceSpy
 
   before( () => {
     sandbox = sinon.createSandbox()
@@ -20,6 +20,7 @@ describe('calculateProductPrice', () => {
     calculateMedicalPriceSpy = sandbox.spy(pricing, 'calculateMedicalPrice')
     calculateVolLifePriceSpy = sandbox.spy(pricing, 'calculateVolLifePrice')
     calculateLTDPriceSpy = sandbox.spy(pricing, 'calculateLTDPrice')
+    calculateCommuterPriceSpy = sandbox.spy(pricing, 'calculateCommuterPrice')
     formatPriceSpy = sandbox.spy(pricing, 'formatPrice')
 
   })
@@ -103,6 +104,19 @@ describe('calculateProductPrice', () => {
     expect(calculateVolLifePriceSpy).to.have.callCount(0)
     expect(calculateLTDPriceSpy).to.have.callCount(1)
     expect(formatPriceSpy).to.have.callCount(1)
+  })
+
+  it('returns the price for a commuter product for an employee using train', () => {
+    let product = products.commuter
+    let selectedOptions = {type: 'train'}
+
+    let result = pricing.calculateProductPrice(product,selectedOptions)
+
+    expect(result).to.equal(9.75)
+    expect(calculateMedicalPriceSpy).to.have.callCount(0)
+    expect(calculateVolLifePriceSpy).to.have.callCount(0)
+    expect(calculateLTDPriceSpy).to.have.callCount(0)
+    expect(calculateCommuterPriceSpy).to.have.calledOnce
   })
 
   it('throws an error on unknown product type', () => {
@@ -247,10 +261,23 @@ describe('calculateLTDPrice', () => {
       familyMembersToCover: ['sp','ch', 'ee']
     }
 
-    let result = pricing.calculateProductPrice(product, employee, selectedOptions)
+    let result = pricing.calculateLTDPrice(product, employee, selectedOptions)
 
-    expect(price).to.equal(22.04)
+    expect(result).to.equal(32.04)
     console.log(result)
   })
+})
+
+describe('calculateCommuterPrice', () => {
+  xit("returns price of package based on type of commute", () => {
+    let product = products.commuter
+    let selectedOptions = {type: 'train'}
+
+    let result = pricing.calculateCommuterPrice(product,selectedOptions)
+
+    expect(result).to.equal(84.75)
+    expect(formatPriceSpy).to.have.calledOnce
+  })
+
 })
 
