@@ -10,9 +10,9 @@ const { expect } = chai
 chai.use(sinonChai)
 
 describe('calculateProductPrice', () => {
-  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy,calculateCommuterPriceSpy
+  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy, calculateCommuterPriceSpy
 
-  before( () => {
+  before(() => {
     sandbox = sinon.createSandbox()
   })
 
@@ -25,7 +25,7 @@ describe('calculateProductPrice', () => {
 
   })
 
-  afterEach( () => {
+  afterEach(() => {
     sandbox.restore()
   })
 
@@ -107,10 +107,12 @@ describe('calculateProductPrice', () => {
   })
 
   it('returns the price for a commuter product for an employee using train', () => {
-    let product = products.commuter
-    let selectedOptions = {type: 'train'}
+    const product = products.commuter
+    const selectedOptions = {
+      type: 'train'
+    }
 
-    let result = pricing.calculateProductPrice(product,selectedOptions)
+    const result = pricing.calculateProductPrice(product, employee, selectedOptions)
 
     expect(result).to.equal(9.75)
     expect(calculateMedicalPriceSpy).to.have.callCount(0)
@@ -181,9 +183,9 @@ describe('getEmployerContribution', () => {
     let price = 50
     let errorOccured = false
 
-    try{
+    try {
       let result = pricing.getEmployerContribution(employerContributes, price)
-    }catch (err) {
+    } catch (err) {
       errorOccured = true
     }
 
@@ -197,7 +199,7 @@ describe('getMedicalPricePerRole', () => {
   it('Searches an array of objects for one with the same role and returns its price', () => {
     let arrayOfCosts = products.medical.costs
     let role = 'ch'
-    let result = pricing.getMedicalPricePerRole(role,arrayOfCosts)
+    let result = pricing.getMedicalPricePerRole(role, arrayOfCosts)
 
     expect(result).to.equal(1.17)
   })
@@ -207,23 +209,23 @@ describe('getMedicalPricePerRole', () => {
     let role = 'ch'
     let errorHappened = false
 
-    try{
-      let result = pricing.getMedicalPricePerRole(role,arrayOfCosts)
-    }catch{
+    try {
+      let result = pricing.getMedicalPricePerRole(role, arrayOfCosts)
+    } catch{
       errorHappened = true
     }
 
     expect(errorHappened).to.equal(true)
   })
-  
+
 })
 
-describe('calculateMedicalPrice', ()=> {
+describe('calculateMedicalPrice', () => {
   it('Returns the price of the medical plan based on how many roles the applicant has to cover', () => {
     let product = products.medical
-    let selectedOptions = { familyMembersToCover: ['ee','sp'] }
+    let selectedOptions = { familyMembersToCover: ['ee', 'sp'] }
 
-    let result = pricing.calculateMedicalPrice(product,selectedOptions)
+    let result = pricing.calculateMedicalPrice(product, selectedOptions)
 
     expect(result).to.equal(21.71)
   })
@@ -258,7 +260,7 @@ describe('calculateLTDPrice', () => {
   it("returns price of LTD package; takes only the employee into account", () => {
     let product = products.longTermDisability
     let selectedOptions = {
-      familyMembersToCover: ['sp','ch', 'ee']
+      familyMembersToCover: ['sp', 'ch', 'ee']
     }
 
     let result = pricing.calculateLTDPrice(product, employee, selectedOptions)
@@ -269,14 +271,15 @@ describe('calculateLTDPrice', () => {
 })
 
 describe('calculateCommuterPrice', () => {
-  xit("returns price of package based on type of commute", () => {
-    let product = products.commuter
-    let selectedOptions = {type: 'train'}
+  let sandbox, calculateMedicalPriceSpy, calculateVolLifePriceSpy, calculateLTDPriceSpy, formatPriceSpy, calculateCommuterPriceSpy
 
-    let result = pricing.calculateCommuterPrice(product,selectedOptions)
+  it("returns price of package based on type of commute", () => {
+    let product = products.commuter
+    let selectedOptions = { type: 'train' }
+
+    let result = pricing.calculateCommuterPrice(product, selectedOptions)
 
     expect(result).to.equal(84.75)
-    expect(formatPriceSpy).to.have.calledOnce
   })
 
 })
